@@ -4,10 +4,14 @@ export const booksApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: "https://localhost:7271/api",
   }),
+  tagTypes: ["books"],
   endpoints: (builder) => {
     return {
       getAllBooks: builder.query({
-        query: () => "/books",
+        query: () => {
+          return "/books";
+        },
+        providesTags: ["books"],
       }),
       getBookById: builder.query({
         query: (id) => `/book/${id}`,
@@ -20,6 +24,17 @@ export const booksApi = createApi({
             method: "DELETE",
           };
         },
+        invalidatesTags: ["books"],
+      }),
+      editBook: builder.mutation({
+        query: ({ id, ...patch }) => {
+          return {
+            url: `/book/${id}`,
+            method: "PATCH",
+            body: patch.patch,
+          };
+        },
+        invalidatesTags: ["books"],
       }),
     };
   },
@@ -28,4 +43,5 @@ export const {
   useGetAllBooksQuery,
   useLazyGetBookByIdQuery,
   useDeleteBookMutation,
+  useEditBookMutation,
 } = booksApi;
